@@ -35,7 +35,7 @@ import ra.payload.request.SignupRequest;
 import ra.security.CustomUserDetails;
 
 @CrossOrigin("*")
-@RestController
+@Controller
 @RequestMapping("api/v1/auth/**")
 public class UserController {
     @Autowired
