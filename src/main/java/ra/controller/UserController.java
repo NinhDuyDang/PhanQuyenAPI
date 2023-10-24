@@ -13,7 +13,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,15 +48,26 @@ public class UserController {
     private RolesService rolesService;
     @Autowired
     private PasswordEncoder encoder;
-    @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
-        if (userService.existsByUserName(signupRequest.getUserName())) {
-            return ResponseEntity.badRequest().body(new MessageReponse("Error:Username is already"));
-        }
-        if (userService.existsByEmail(signupRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageReponse("Error:Mail is already"));
 
-        }
+    @GetMapping("/signup")
+    public String showSignupPage(Model model){
+        model.addAttribute("account", new User());
+        return "register";
+    }
+
+    @GetMapping("/signin")
+    public String showSigninPage(){
+        return "login";
+    }
+
+    @PostMapping("/signup")
+    public String registerUser(@RequestBody SignupRequest signupRequest) {
+        // if (userService.existsByUserName(signupRequest.getUserName())) {
+        //     return ResponseEntity.badRequest().body(new MessageReponse("Error:Username is already"));
+        // }
+        // if (userService.existsByEmail(signupRequest.getEmail())) {
+        //     return ResponseEntity.badRequest().body(new MessageReponse("Error:Mail is already"));
+        // }
         User user = new User();
         user.setUserName(signupRequest.getUserName());
         user.setPassword(encoder.encode(signupRequest.getPassword()));
@@ -103,7 +117,8 @@ public class UserController {
     }
         user.setListRoles(listRoles);
         userService.saveOrUpdate(user);
-        return ResponseEntity.ok(new MessageReponse("User register successfully"));
+
+        return "redirect:/api/v1/auth/signin";
     }
     @PostMapping("/signin")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest){
