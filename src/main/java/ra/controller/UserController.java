@@ -15,12 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ra.jwt.JwtTokenProvider;
 import ra.model.entity.ERole;
@@ -93,33 +88,97 @@ public class UserController {
             listRoles.add(userRole);
         }
 
-    else {
+        else {
             strRoles.forEach(role->{
                 switch (role){
                     case "admin":
                         Roles admin = rolesService.findByRoleName(ERole.ROLE_ADMIN)
                                 .orElseThrow(()->new RuntimeException("Error is not found "));
                         listRoles.add(admin);
-					break;
+                        break;
                     case"moderator" :
                         Roles modRole = rolesService.findByRoleName(ERole.ROLE_MODERATOR)
                                 .orElseThrow(()->new RuntimeException("Error is not found"));
                         listRoles.add(modRole);
-					break;
+                        break;
                     case "user":
                         Roles userRole = rolesService.findByRoleName(ERole.ROLE_USER)
                                 .orElseThrow(()->new RuntimeException("Error is not found"));
                         listRoles.add(userRole);
-					break;
+                        break;
                 }
             });
 
-    }
+        }
         user.setListRoles(listRoles);
         userService.saveOrUpdate(user);
 
         return "redirect:/api/v1/auth/signin";
     }
+
+
+//@PostMapping("/signup")
+//public String registerUser(@ModelAttribute SignupRequest signupRequest) {
+//    if (userService.existsByUserName(signupRequest.getUserName())) {
+//        // Return a message or redirect with an error message
+//        return "redirect:/signup?error=username";
+//    }
+//
+//    if (userService.existsByEmail(signupRequest.getEmail())) {
+//        // Return a message or redirect with an error message
+//        return "redirect:/signup?error=email";
+//    }
+//
+//    User user = new User();
+//    user.setUserName(signupRequest.getUserName());
+//    user.setPassword(encoder.encode(signupRequest.getPassword()));
+//    user.setEmail(signupRequest.getEmail());
+//    user.setPhone(signupRequest.getPhone());
+//    user.setUserStatus(true);
+//
+//    // Set the creation date
+//    user.setCreated(new Date());
+//
+//    Set<String> strRoles = signupRequest.getListRoles();
+//    Set<Roles> listRoles = new HashSet<>();
+//
+//    if (strRoles == null || strRoles.isEmpty()) {
+//        // If no roles are specified, set a default role (ROLE_USER)
+//        Roles userRole = rolesService.findByRoleName(ERole.ROLE_USER)
+//                .orElseThrow(() -> new RuntimeException("Default user role not found"));
+//        listRoles.add(userRole);
+//    } else {
+//        // Map string roles to actual role objects
+//        for (String role : strRoles) {
+//            switch (role) {
+//                case "admin":
+//                    Roles admin = rolesService.findByRoleName(ERole.ROLE_ADMIN)
+//                            .orElseThrow(() -> new RuntimeException("Admin role not found"));
+//                    listRoles.add(admin);
+//                    break;
+//                case "moderator":
+//                    Roles modRole = rolesService.findByRoleName(ERole.ROLE_MODERATOR)
+//                            .orElseThrow(() -> new RuntimeException("Moderator role not found"));
+//                    listRoles.add(modRole);
+//                    break;
+//                case "user":
+//                    Roles userRole = rolesService.findByRoleName(ERole.ROLE_USER)
+//                            .orElseThrow(() -> new RuntimeException("User role not found"));
+//                    listRoles.add(userRole);
+//                    break;
+//                default:
+//                    throw new IllegalArgumentException("Invalid role: " + role);
+//            }
+//        }
+//    }
+//
+//    user.setListRoles(listRoles);
+//    userService.saveOrUpdate(user);
+//
+//    // Redirect to the login page after successful registration
+//    return "redirect:/api/v1/auth/signin";
+//}
+
     @PostMapping("/signin")
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest){
         Authentication authentication = authenticationManager.authenticate(
