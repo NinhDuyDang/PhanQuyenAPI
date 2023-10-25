@@ -121,7 +121,7 @@ public class UserController {
         return "redirect:/api/v1/auth/signin";
     }
     @PostMapping("/signin")
-    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest){
+    public String loginUser(@RequestBody LoginRequest loginRequest){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword())
         );
@@ -133,8 +133,7 @@ public class UserController {
         List<String> listRoles = customUserDetails.getAuthorities().stream()
                 .map(item->item.getAuthority()).collect(Collectors.toList());
 
-        return ResponseEntity.ok(new JwtReponse(jwt, customUserDetails.getUsername(),customUserDetails.getEmail(),
-                customUserDetails.getPhone(), listRoles));
+        return "home";
 
     }
 }

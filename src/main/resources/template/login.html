@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link rel="stylesheet" href="../static/static/login_styles.css">
+    <link rel="stylesheet" href="../static/login.css">
 
     <title>Đăng nhập</title>
 </head>
@@ -30,7 +30,7 @@
                                         <input type="password" name="" id="password" placeholder="Mật khẩu">
                                     </div>
                                     <button type="submit" class="btn btn-primary">Đăng nhập</button>
-                                    <p class="pt-3">Chưa có tài khoản? <a href="/register.html">Đăng ký</a></p>
+                                    <p class="pt-3">Chưa có tài khoản? <a th:href="@{/api/v1/auth/signup}">Đăng ký</a></p>
                                 </div>
                             </form>
                         </div>
