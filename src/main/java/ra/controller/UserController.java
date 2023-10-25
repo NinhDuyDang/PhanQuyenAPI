@@ -15,12 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import ra.jwt.JwtTokenProvider;
 import ra.model.entity.ERole;
@@ -35,7 +30,7 @@ import ra.payload.request.SignupRequest;
 import ra.security.CustomUserDetails;
 
 @CrossOrigin("*")
-@RestController
+@Controller
 @RequestMapping("api/v1/auth/**")
 public class UserController {
     @Autowired
@@ -51,41 +46,46 @@ public class UserController {
 
     @GetMapping("/signup")
     public String showSignupPage(Model model){
-        model.addAttribute("account", new User());
+        model.addAttribute("user", new User());
         return "register";
     }
 
-    @GetMapping("/signin")
-    public String showSigninPage(){
-        return "login";
+    @PostMapping("/signup")
+    public String registerUser(@RequestBody User user) {
+//         if (userService.existsByUserName(signupRequest.getUserName())) {
+//             return ResponseEntity.badRequest().body(new MessageReponse("Error:Username is already"));
+//         }
+//         if (userService.existsByEmail(signupRequest.getEmail())) {
+//             return ResponseEntity.badRequest().body(new MessageReponse("Error:Mail is already"));
+//         }
+
+            if (userService.existsByUserName(user.getUserName())) {
+        // Return a message or redirect with an error message
+        return "redirect:/signup?error=username";
     }
 
-    @PostMapping("/signup")
-    public String registerUser(@RequestBody SignupRequest signupRequest) {
-        // if (userService.existsByUserName(signupRequest.getUserName())) {
-        //     return ResponseEntity.badRequest().body(new MessageReponse("Error:Username is already"));
-        // }
-        // if (userService.existsByEmail(signupRequest.getEmail())) {
-        //     return ResponseEntity.badRequest().body(new MessageReponse("Error:Mail is already"));
-        // }
-        User user = new User();
-        user.setUserName(signupRequest.getUserName());
-        user.setPassword(encoder.encode(signupRequest.getPassword()));
-        user.setEmail(signupRequest.getEmail());
-        user.setPhone(signupRequest.getPhone());
-        user.setUserStatus(true);
+    if (userService.existsByEmail(user.getEmail())) {
+        // Return a message or redirect with an error message
+        return "redirect:/signup?error=email";
+    }
+        User user1 = new User();
+        user1.setUserName(user.getUserName());
+        user1.setPassword(encoder.encode(user.getPassword()));
+        user1.setEmail(user.getEmail());
+        user1.setPhone(user.getPhone());
+        user1.setUserStatus(true);
 
         //created ngày
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date dateNow = new Date();
         String strNow = sdf.format(dateNow);
         try {
-            user.setCreated(sdf.parse(strNow));
+            user1.setCreated(sdf.parse(strNow));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        Set<String> strRoles = signupRequest.getListRoles();
+        Set<Roles> strRoles = user.getListRoles();
         Set<Roles> listRoles = new HashSet<>();
         if (strRoles == null) {
             // Lấy vai trò người dùng mặc định
@@ -93,35 +93,37 @@ public class UserController {
             listRoles.add(userRole);
         }
 
-    else {
+        else {
             strRoles.forEach(role->{
-                switch (role){
-                    case "admin":
-                        Roles admin = rolesService.findByRoleName(ERole.ROLE_ADMIN)
-                                .orElseThrow(()->new RuntimeException("Error is not found "));
-                        listRoles.add(admin);
-					break;
-                    case"moderator" :
-                        Roles modRole = rolesService.findByRoleName(ERole.ROLE_MODERATOR)
-                                .orElseThrow(()->new RuntimeException("Error is not found"));
-                        listRoles.add(modRole);
-					break;
-                    case "user":
-                        Roles userRole = rolesService.findByRoleName(ERole.ROLE_USER)
-                                .orElseThrow(()->new RuntimeException("Error is not found"));
-                        listRoles.add(userRole);
-					break;
+                if (role.equals("admin")) {
+                    Roles admin = rolesService.findByRoleName(ERole.ROLE_ADMIN)
+                            .orElseThrow(() -> new RuntimeException("Error is not found "));
+                    listRoles.add(admin);
+                } else if (role.equals("moderator")) {
+                    Roles modRole = rolesService.findByRoleName(ERole.ROLE_MODERATOR)
+                            .orElseThrow(() -> new RuntimeException("Error is not found"));
+                    listRoles.add(modRole);
+                } else if (role.equals("user")) {
+                    Roles userRole = rolesService.findByRoleName(ERole.ROLE_USER)
+                            .orElseThrow(() -> new RuntimeException("Error is not found"));
+                    listRoles.add(userRole);
                 }
             });
 
-    }
+        }
         user.setListRoles(listRoles);
         userService.saveOrUpdate(user);
 
         return "redirect:/api/v1/auth/signin";
     }
+
+@GetMapping("/signin")
+public String showSigninPage(){
+    return "login";
+}
+
     @PostMapping("/signin")
-    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest){
+    public String loginUser(@RequestBody LoginRequest loginRequest){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUserName(), loginRequest.getPassword())
         );
@@ -133,8 +135,7 @@ public class UserController {
         List<String> listRoles = customUserDetails.getAuthorities().stream()
                 .map(item->item.getAuthority()).collect(Collectors.toList());
 
-        return ResponseEntity.ok(new JwtReponse(jwt, customUserDetails.getUsername(),customUserDetails.getEmail(),
-                customUserDetails.getPhone(), listRoles));
+        return "home";
 
     }
 }

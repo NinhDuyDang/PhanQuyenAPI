@@ -15,6 +15,10 @@ public class SignupRequest {
     private boolean userStatus;
     private Set<String> ListRoles;
 
+    public SignupRequest(){
+        
+    }
+
     public SignupRequest(String userName, String password, String email, String phone, boolean userStatus, Set<String> listRoles) {
         this.userName = userName;
         this.password = password;
