@@ -120,6 +120,7 @@ public class UserController {
 
         return "redirect:/api/v1/auth/signin";
     }
+    
     @PostMapping("/signin")
     public String loginUser(@RequestBody LoginRequest loginRequest){
         Authentication authentication = authenticationManager.authenticate(
