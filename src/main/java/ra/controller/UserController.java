@@ -47,8 +47,13 @@ public class UserController {
     @Autowired
     private PasswordEncoder encoder;
 
+    public boolean errSignup = false;
+
     @GetMapping("/signup")
     public String showSignupPage(Model model){
+        if(errSignup == true){
+            model.addAttribute("errSignup", "Username or Email is existed!");
+        }
         model.addAttribute("user", new User());
         return "register";
     }
@@ -124,15 +129,17 @@ public class UserController {
     @PostMapping("/signup")
     public String registerUser(@ModelAttribute User user) { // Use @ModelAttribute instead of @RequestBody
 
-        if (userService.existsByUserName(user.getUserName())) {
+        if (userService.existsByUserName(user.getUserName()) || userService.existsByEmail(user.getEmail())) {
             // Redirect with an error message
-            return "redirect:/signup?error=username";
+            errSignup = true;
+            return "redirect:/api/v1/auth/signup";
         }
 
-        if (userService.existsByEmail(user.getEmail())) {
-            // Redirect with an error message
-            return "redirect:/signup?error=email";
-        }
+        // if (userService.existsByEmail(user.getEmail())) {
+        //     // Redirect with an error message
+        //     errEmail = true;
+        //     return "redirect:/api/v1/auth/signup";
+        // }
 
         User user1 = new User();
         user1.setUserName(user.getUserName());

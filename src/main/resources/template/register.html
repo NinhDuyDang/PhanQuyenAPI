@@ -35,9 +35,12 @@
                                 <div class="row">
                                     <input type="text" name="" id="" th:field="*{phone}" placeholder="Phone number">
                                 </div>
-                                <button type="submit" class="btn btn-primary">Đăng ký</button>
+                                <button type="submit" class="btn btn-primary">Register</button>
                             </div>
                         </form>
+                        <div style="color: red;" th:text="${errSignup}"></div>
+                        <!-- <div style="color: red;" th:text="${errEmail}">Email is existed</div> -->
+                        
                     </div>
                 </div>
             </div>
