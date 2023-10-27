@@ -35,6 +35,19 @@
                                 <div class="row">
                                     <input type="text" name="" id="" th:field="*{phone}" placeholder="Phone number">
                                 </div>
+                                <div class="row">
+                                    <div style="display: flex; margin: 0 auto;">
+                                        <div>Role&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                                        <select th:field="*{listRoles}">
+                                            <option value="Lựa chọn">Lựa chọn</option>
+                                            <option value="Admin">Admin</option>
+                                            <option value="Moderator">Moderator</option>
+                                            <option value="User">User</option>
+                                        </select>
+                                    </div>
+                                    <!-- <input type="text" name="" id="" th:field="*{phone}" placeholder="Phone number"> -->
+                                </div>
+
                                 <button type="submit" class="btn btn-primary">Register</button>
                             </div>
                         </form>
