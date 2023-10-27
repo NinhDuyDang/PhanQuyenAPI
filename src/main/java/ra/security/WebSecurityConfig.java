@@ -107,13 +107,27 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/api/v1/auth/**").permitAll()
-                .antMatchers("/api/v1/test/**").permitAll()
-                .anyRequest().authenticated();
+        // http.cors().and().csrf().disable()
+        //         .authorizeRequests()
+        //         .antMatchers("/api/v1/auth/**").permitAll()
+        //         .antMatchers("/api/v1/test/**").permitAll()
+        //         .anyRequest().authenticated();
 
-        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        // http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http
+            .authorizeRequests()
+                .antMatchers("/**").permitAll()
+                .anyRequest().authenticated()
+                .and()
+            .formLogin()
+                .loginPage("/singin")
+                .usernameParameter("userName")
+                .passwordParameter("password")
+                .permitAll()
+                .and()
+            .logout()
+                .permitAll();
+        
     }
 
     @Bean(name = BeanIds.AUTHENTICATION_MANAGER)

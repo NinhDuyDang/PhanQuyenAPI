@@ -32,9 +32,9 @@ import ra.security.CustomUserDetails;
 
 import javax.servlet.http.HttpServletRequest;
 
-@CrossOrigin("*")
+// @CrossOrigin("*")
 @Controller
-@RequestMapping("api/v1/auth/**")
+// @RequestMapping("api/v1/auth/**")
 public class UserController {
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -49,7 +49,7 @@ public class UserController {
 
     public boolean errSignup = false;
 
-    @GetMapping("/signup")
+    @GetMapping("/register")
     public String showSignupPage(Model model){
         if(errSignup == true){
             model.addAttribute("errSignup", "Username or Email is existed!");
@@ -126,7 +126,7 @@ public class UserController {
 //    }
 
 
-    @PostMapping("/signup")
+    @PostMapping("/register")
     public String registerUser(@ModelAttribute User user) { // Use @ModelAttribute instead of @RequestBody
 
         if (userService.existsByUserName(user.getUserName()) || userService.existsByEmail(user.getEmail())) {
@@ -183,32 +183,41 @@ public class UserController {
         }
 
         user.setListRoles(listRoles);
+
+        // if(user.getRole().equals("Admin")){
+        //     user1.setRole(ERole.ROLE_ADMIN);
+        // }else if(user.getRole().equals("Moderator")){
+        //     user1.setRole(ERole.ROLE_MODERATOR);
+        // }else{
+        //     user1.setRole(ERole.ROLE_USER);
+        // }
+
         userService.saveOrUpdate(user1); // Save user1 instead of user
 
-        return "redirect:/api/v1/auth/signin";
+        return "redirect:/login";
     }
 
-    @GetMapping("/signin")
+    @GetMapping("/login")
    public String showSigninPage(){
     return "login";
 }
 
-    @PostMapping("/signin")
-    public String loginUser(@ModelAttribute  User user){
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        // sinh jwt trả về token
-        String jwt = jwtTokenProvider.generateToken(customUserDetails);
-        // lấy các quyền của user
-        List<String> listRoles = customUserDetails.getAuthorities().stream()
-                .map(item->item.getAuthority()).collect(Collectors.toList());
+    // @PostMapping("/login")
+    // public String loginUser(@ModelAttribute  User user){
+    //     Authentication authentication = authenticationManager.authenticate(
+    //             new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword())
+    //     );
+    //     SecurityContextHolder.getContext().setAuthentication(authentication);
+    //     CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+    //     // sinh jwt trả về token
+    //     String jwt = jwtTokenProvider.generateToken(customUserDetails);
+    //     // lấy các quyền của user
+    //     List<String> listRoles = customUserDetails.getAuthorities().stream()
+    //             .map(item->item.getAuthority()).collect(Collectors.toList());
 
-        return "home";
+    //     return "home";
 
-    }
+    // }
 
 
 }

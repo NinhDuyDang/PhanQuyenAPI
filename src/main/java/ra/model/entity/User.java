@@ -42,6 +42,7 @@ public class User {
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "User_Role",joinColumns = @JoinColumn(name = "UserId"), inverseJoinColumns = @JoinColumn(name = "RoleId"))
     private Set<Roles> listRoles = new HashSet<>();
+	// private ERole role;
 
 	public int getUserId() {
 		return userId;
@@ -107,5 +108,12 @@ public class User {
 		this.listRoles = listRoles;
 	}
 
+	// public ERole getRole(){
+	// 	return this.role;
+	// }
+
+	// public void setRole(ERole role){
+	// 	this.role = role;
+	// }
 
 }

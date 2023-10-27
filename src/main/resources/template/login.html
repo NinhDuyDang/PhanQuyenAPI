@@ -8,7 +8,7 @@
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" href="../static/login.css">
 
-    <title>Đăng nhập</title>
+    <title>Login</title>
 </head>
 
 <body>
@@ -18,19 +18,20 @@
                 <div class="col center">
                     <div class="card align-middle" style="border-radius: 10px; min-width: 500px;;">
                         <div class="card-header text-center" style="font-size: 2rem;">
-                            Đăng nhập
+                            Login
                         </div>
                         <div class="card-body">
-                            <form id="loginForm" th:action="@{/api/v1/auth/signin}" method="post">
+                            <form id="loginForm" th:action="@{/login}" method="post">
                                 <div class="col">
                                     <div class="row">
-                                        <input type="text" name="" id="username" placeholder="Tên tài khoản">
+                                        <input type="text" name="userName" id="userName" placeholder="Username">
                                     </div>
                                     <div class="row">
-                                        <input type="password" name="" id="password" placeholder="Mật khẩu">
+                                        <input type="password" name="password" id="password" placeholder="Password">
                                     </div>
-                                    <button type="submit" class="btn btn-primary">Đăng nhập</button>
-                                    <p class="pt-3">Chưa có tài khoản? <a th:href="@{/api/v1/auth/signup}">Đăng ký</a></p>
+                                    <button type="submit" class="btn btn-primary">Login</button>
+                                    <p class="pt-3">Doesn't have account? <a
+                                            th:href="@{/register}">Register</a></p>
                                 </div>
                             </form>
                         </div>
